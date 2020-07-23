@@ -1,0 +1,6 @@
+C:\Users\x\source\repos\RPT\RPT\bin\Release\RPT.exe.config
+C:\Users\x\source\repos\RPT\RPT\bin\Release\RPT.exe
+C:\Users\x\source\repos\RPT\RPT\bin\Release\RPT.pdb
+C:\Users\x\source\repos\RPT\RPT\obj\Release\RPT.csproj.CoreCompileInputs.cache
+C:\Users\x\source\repos\RPT\RPT\obj\Release\RPT.exe
+C:\Users\x\source\repos\RPT\RPT\obj\Release\RPT.pdb
