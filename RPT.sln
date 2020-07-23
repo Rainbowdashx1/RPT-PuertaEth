@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPT", "RPT\RPT.csproj", "{9F94E5D3-D771-426A-A3B8-264C0FD49D86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{1824B481-685E-468F-89A3-BE512C84D4AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Instalador", "Instalador", "{9B08E506-8C38-4580-A38F-CD94577C7BA6}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "RPTInstall", "RPTInstall\RPTInstall.vdproj", "{A30FF853-C21B-49BE-A98B-07EE15BA9864}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F94E5D3-D771-426A-A3B8-264C0FD49D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F94E5D3-D771-426A-A3B8-264C0FD49D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F94E5D3-D771-426A-A3B8-264C0FD49D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F94E5D3-D771-426A-A3B8-264C0FD49D86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A30FF853-C21B-49BE-A98B-07EE15BA9864}.Debug|Any CPU.ActiveCfg = Debug
+		{A30FF853-C21B-49BE-A98B-07EE15BA9864}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9F94E5D3-D771-426A-A3B8-264C0FD49D86} = {1824B481-685E-468F-89A3-BE512C84D4AC}
+		{A30FF853-C21B-49BE-A98B-07EE15BA9864} = {9B08E506-8C38-4580-A38F-CD94577C7BA6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6B60AB7-F1E9-47C3-B195-B566DE637860}
+	EndGlobalSection
+EndGlobal
