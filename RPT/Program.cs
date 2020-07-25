@@ -45,10 +45,11 @@ namespace RPT
                     {
                         Console.WriteLine("Conexion Establecida con exito!.");
                         WriteLine("onu status", tc);
+                        System.Threading.Thread.Sleep(1000);
                         WriteLine("yes", tc);
                         Console.WriteLine("Recopilando posiciones.");
                         List<string> Posiciones = new List<string>();
-
+                        System.Threading.Thread.Sleep(1000);
                         bool TerminoDeCarga = false;
                         string PrimeraLista = "";
 
@@ -62,6 +63,10 @@ namespace RPT
                             }
                             else
                             {
+                                if (PrimeraLista != "") 
+                                {
+                                    Console.WriteLine(PrimeraLista);
+                                }
                                 System.Threading.Thread.Sleep(10000);
                             }
                         }
@@ -76,7 +81,7 @@ namespace RPT
                         }
 
                         WriteLine("a", tc);
-                        System.Threading.Thread.Sleep(15000);
+                        System.Threading.Thread.Sleep(5000);
                         string SegundaLista = Read(tc);
                         List<string> ListSegundaLista = SegundaLista.Split('\n').ToList();
                         foreach (string po in ListSegundaLista)
