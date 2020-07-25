@@ -35,84 +35,114 @@ namespace RPT
 
                 string IpRecolectada = Console.ReadLine();
                 IpRecolectada = ConfirmarIp(IpRecolectada, Msj);
-                TcpClient tc = new TcpClient(IpRecolectada, 23);
-
-                var c = Login("rsegovia", "BDF5DCN>=", 1000, tc);
-
-                if (c.Split('\n')[2].Contains("rsegovia"))
+                try
                 {
-                    Console.WriteLine("Conexion Establecida con exito!.");
-                    WriteLine("onu status", tc);
-                    WriteLine("yes", tc);
-                    Console.WriteLine("Recopilando posiciones.");
-                    List<string> Posiciones = new List<string>();
-                    System.Threading.Thread.Sleep(300000);
+                    TcpClient tc = new TcpClient(IpRecolectada, 23);
 
-                    string PrimeraLista = Read(tc);
-                    List<string> ListPrimeraLista = PrimeraLista.Split('\n').ToList();
-                    foreach (string po in ListPrimeraLista)
+                    var c = Login("rsegovia", "BDF5DCN>=", 1000, tc);
+
+                    if (c.Split('\n')[2].Contains("rsegovia"))
                     {
-                        if (po.Contains("dBm"))
+                        Console.WriteLine("Conexion Establecida con exito!.");
+                        WriteLine("onu status", tc);
+                        WriteLine("yes", tc);
+                        Console.WriteLine("Recopilando posiciones.");
+                        List<string> Posiciones = new List<string>();
+
+                        bool TerminoDeCarga = false;
+                        string PrimeraLista = "";
+
+                        while (!TerminoDeCarga)
                         {
-                            Posiciones.Add(po);
+                            PrimeraLista = Read(tc);
+                            if (PrimeraLista.Contains("dBm"))
+                            {
+                                TerminoDeCarga = true;
+                                break;
+                            }
+                            else
+                            {
+                                System.Threading.Thread.Sleep(10000);
+                            }
                         }
-                    }
 
-                    WriteLine("a", tc);
-                    System.Threading.Thread.Sleep(15000);
-                    string SegundaLista = Read(tc);
-                    List<string> ListSegundaLista = SegundaLista.Split('\n').ToList();
-                    foreach (string po in ListSegundaLista)
-                    {
-                        if (po.Contains("dBm"))
+                        List<string> ListPrimeraLista = PrimeraLista.Split('\n').ToList();
+                        foreach (string po in ListPrimeraLista)
                         {
-                            Posiciones.Add(po);
+                            if (po.Contains("dBm"))
+                            {
+                                Posiciones.Add(po);
+                            }
                         }
-                    }
-                    Console.WriteLine("Posiciones Recopiladas con exito - Total  = " + Posiciones.Count.ToString());
-                    List<ObjetoPosiciones> objpo = new List<ObjetoPosiciones>();
-                    foreach (string Po in Posiciones)
-                    {
-                        string line = Po.Replace("\r", "").Replace("dBm", "");
-                        var cline = line.Split(' ').ToList().Where(x => x != "").ToList();
-                        objpo.Add(new ObjetoPosiciones { ID = cline[0], Onu = cline[1], OperStatus = cline[2], ConfigState = cline[3], DownloadState = cline[4], Tx = cline[5], Rx = cline[6], KM = cline[7], OnuStatus = cline[8], State = cline[9] });
-                    }
 
-                    List<ObjScaner> objScan = new List<ObjScaner>();
-                    foreach (ObjetoPosiciones Po in objpo)
-                    {
-                        WriteLine("onu status " + Po.Onu + " port eth 1", tc);
-                        System.Threading.Thread.Sleep(2000);
-                        string RespuestaComandoFinal = Read(tc).Replace("\r", "").Replace("\t", "");
-
-                        var ParametrosNecesarios = RespuestaComandoFinal.Split('\n').Where(x => x.Contains("Configured Auto-Detection") || x.Contains("Administrative State") || x.Contains("Operational State") || x.Contains("Connection Type")).ToList();
-
-                        objScan.Add(new ObjScaner
+                        WriteLine("a", tc);
+                        System.Threading.Thread.Sleep(15000);
+                        string SegundaLista = Read(tc);
+                        List<string> ListSegundaLista = SegundaLista.Split('\n').ToList();
+                        foreach (string po in ListSegundaLista)
                         {
-                            Onu = Po.Onu
-                            ,
-                            ConfiguredAutoDetection = (ParametrosNecesarios.Count>0? ParametrosNecesarios[0].Replace("Configured Auto-Detection", "").Replace(" ", "") : "Data no disponible" )
-                            ,
-                            AdministrativeState = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[1].Replace("Administrative State", "").Replace(" ", ""): "Data no disponible" )
-                            ,
-                            OperationalState = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[2].Replace("Operational State", "").Replace(" ", ""): "Data no disponible" )
-                            ,
-                            ConnectionType = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[3].Replace("Connection Type", "").Replace(" ", ""): "Data no disponible" )
-                        });
-                    }
+                            if (po.Contains("dBm"))
+                            {
+                                Posiciones.Add(po);
+                            }
+                        }
+                        Console.WriteLine("Posiciones Recopiladas con exito - Total  = " + Posiciones.Count.ToString());
+                        List<ObjetoPosiciones> objpo = new List<ObjetoPosiciones>();
+                        foreach (string Po in Posiciones)
+                        {
+                            string line = Po.Replace("\r", "").Replace("dBm", "");
+                            var cline = line.Split(' ').ToList().Where(x => x != "").ToList();
+                            objpo.Add(new ObjetoPosiciones { ID = cline[0], Onu = cline[1], OperStatus = cline[2], ConfigState = cline[3], DownloadState = cline[4], Tx = cline[5], Rx = cline[6], KM = cline[7], OnuStatus = cline[8], State = cline[9] });
+                        }
 
-                    StringBuilder sbOutput = new StringBuilder();
-                    sbOutput.AppendLine("ID,Onu,OperStatus,ConfigState,DownLoadState,TX,RX,KM,OnuState,State,ConfiguredAutoDetection,AdministrativeState,OperationalState,ConnectionType");
-                    foreach (ObjetoPosiciones Po in objpo)
-                    {
-                        ObjScaner scan = objScan.Find(x => x.Onu == Po.Onu);
-                        sbOutput.AppendLine(Po.ID + "," + Po.Onu + "," + Po.OperStatus + "," + Po.ConfigState + "," + Po.DownloadState + "," + Po.Tx + "," + Po.Rx + "," + Po.KM + "," + Po.OnuStatus + "," + Po.State + "," + scan.ConfiguredAutoDetection + "," + scan.AdministrativeState + "," + scan.OperationalState + "," + scan.ConnectionType);
+                        List<ObjScaner> objScan = new List<ObjScaner>();
+                        Console.WriteLine("Inicia Iteracion de posiciones (on status xxxxx port eth 1)");
+                        int PosicionNumber = 0;
+                        foreach (ObjetoPosiciones Po in objpo)
+                        {
+                            Console.WriteLine("Posicion " + Po.Onu + " - Numero : " + (PosicionNumber + 1) + " De : " + Posiciones.Count.ToString());
+                            WriteLine("onu status " + Po.Onu + " port eth 1", tc);
+                            System.Threading.Thread.Sleep(1000);
+                            string RespuestaComandoFinal = Read(tc).Replace("\r", "").Replace("\t", "");
+
+                            var ParametrosNecesarios = RespuestaComandoFinal.Split('\n').Where(x => x.Contains("Configured Auto-Detection") || x.Contains("Administrative State") || x.Contains("Operational State") || x.Contains("Connection Type")).ToList();
+
+                            objScan.Add(new ObjScaner
+                            {
+                                Onu = Po.Onu
+                                ,
+                                ConfiguredAutoDetection = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[0].Replace("Configured Auto-Detection", "").Replace(" ", "") : "Data no disponible")
+                                ,
+                                AdministrativeState = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[1].Replace("Administrative State", "").Replace(" ", "") : "Data no disponible")
+                                ,
+                                OperationalState = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[2].Replace("Operational State", "").Replace(" ", "") : "Data no disponible")
+                                ,
+                                ConnectionType = (ParametrosNecesarios.Count > 0 ? ParametrosNecesarios[3].Replace("Connection Type", "").Replace(" ", "") : "Data no disponible")
+                            });
+                            PosicionNumber++;
+                        }
+
+                        StringBuilder sbOutput = new StringBuilder();
+                        sbOutput.AppendLine("ID,Onu,OperStatus,ConfigState,DownLoadState,TX,RX,KM,OnuState,State,ConfiguredAutoDetection,AdministrativeState,OperationalState,ConnectionType");
+                        foreach (ObjetoPosiciones Po in objpo)
+                        {
+                            ObjScaner scan = objScan.Find(x => x.Onu == Po.Onu);
+                            sbOutput.AppendLine(Po.ID + "," + Po.Onu + "," + Po.OperStatus + "," + Po.ConfigState + "," + Po.DownloadState + "," + Po.Tx + "," + Po.Rx + "," + Po.KM + "," + Po.OnuStatus + "," + Po.State + "," + scan.ConfiguredAutoDetection + "," + scan.AdministrativeState + "," + scan.OperationalState + "," + scan.ConnectionType);
+                        }
+                        File.WriteAllText(@"C:\Archivo_" + IpRecolectada.Replace(".", "_") + ".csv", sbOutput.ToString());
+                        Console.WriteLine("Archivo guardado en " + @"C:\Archivo_" + IpRecolectada.Replace(".", "_") + ".csv");
+                        Console.WriteLine("Terminado - Precione Enter para continuar  ... ");
+                        Console.ReadLine();
                     }
-                    File.WriteAllText(@"C:\Archivo_" + IpRecolectada.Replace(".", "_") + ".csv", sbOutput.ToString());
-                    Console.WriteLine("Archivo guardado en "+ @"C:\Archivo_" + IpRecolectada.Replace(".", "_") + ".csv");
-                    Console.WriteLine("Terminado - Precione Enter para continuar  ... ");
+                    Console.Clear();
                 }
-                Console.Clear();
+                catch (Exception ex) 
+                {
+                    Console.WriteLine("- Ocurrio un error Message : "+ex.Message+"\n - Inner : "+ex.InnerException);
+                    Console.WriteLine("Precione Enter para continuar ingresar una nueva IP");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
             }
         }
         public static string Login(string Username, string Password, int LoginTimeOutMs, TcpClient tc)
