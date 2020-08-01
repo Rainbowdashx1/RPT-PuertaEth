@@ -56,7 +56,7 @@ namespace RPT
                         while (!TerminoDeCarga)
                         {
                             PrimeraLista = Read(tc);
-                            if (PrimeraLista.Contains("dBm"))
+                            if (PrimeraLista.Contains("dBm") || PrimeraLista.Contains("====="))
                             {
                                 TerminoDeCarga = true;
                                 break;
