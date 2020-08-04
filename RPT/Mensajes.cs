@@ -1,5 +1,4 @@
-﻿
-namespace RPT
+﻿namespace RPT
 {
     public class Mensajes
     {
