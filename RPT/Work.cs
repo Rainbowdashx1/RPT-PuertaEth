@@ -39,9 +39,9 @@ namespace RPT
             {
                 TcpClient tc = new TcpClient(IpRecolectada, 23);
 
-                var c = Login("rsegovia", "BDF5DCN>=", 1000, tc);
+                var c = Login("Login", "Password", 1000, tc);
 
-                if (c.Split('\n')[2].Contains("rsegovia"))
+                if (c.Split('\n')[2].Contains("Login"))
                 {
                     Console.WriteLine("*************************\nHilo : " + HiloIndex.ToString() + " \n" + "IP : " + IpRecolectada + " \n" + " Conexion Establecida con exito!.\n"+ "*************************");
                     WriteLine("onu status", tc);
